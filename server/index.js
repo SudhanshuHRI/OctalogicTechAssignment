@@ -93,7 +93,7 @@ app.post("/postBooking", async (req, res) => {
     const isOverlap = isDateRangeOverlapping(newFrom, newTill, existingFrom, existingTill);
 
     if (isOverlap) {
-      return res.json( {status:400,message:`ID already booked. Existing booking: ${existing.booked_from} to ${existing.booked_till}`}
+      return res.json( {status:400,message:`Vehicle already booked. Existing booking: ${existing.booked_from} to ${existing.booked_till}`}
         
       );
     }
