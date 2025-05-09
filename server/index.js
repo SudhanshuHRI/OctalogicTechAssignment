@@ -1,25 +1,41 @@
-import mysql from "mysql2";
+import dotenv from "dotenv";
+dotenv.config();
+import cors from "cors";
+import express from "express";
+import db from "./db.js";
+import cookieParser from "cookie-parser";
 
+const app = express();
+const PORT = process.env.PORT || 5000;
 
-const pool = mysql.createPool({
-    host:"127.0.0.1",
-    user:"root",
-    password:'',
-    database:"octalogic_tech"
-}).promise()
+db.connect();
 
+const allowedOrigins = [
+  "http://localhost:3500",
+  "http://localhost:5000",
+  "http://localhost:3000",
+];
 
-async function testConnection() {
-    try {
-        await pool.query('SELECT 1');
-        console.log('✅ Database connection successful');
-    } catch (err) {
-        console.error('❌ Database connection failed:', err.message);
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
     }
-}
+  },
+  credentials: true,
+  allowedHeaders: "Content-Type,Authorization",
+};
 
-testConnection();
+app.use(cors(corsOptions));
+app.use(express.json());
+app.use(cookieParser());
 
+//routes
+app.use("/", (req, res) =>
+  res.json({ message: "Welcome Management Backend!" })
+);
 
-// const dummy = await pool.query("select * from dummy")
-// console.log(dummy[0])
+app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
